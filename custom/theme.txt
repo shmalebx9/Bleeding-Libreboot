@@ -1,0 +1,30 @@
+desktop-image: "background.jpg"
+title-text: ""
+
+terminal-border: "0"
+terminal-left: "0"
+terminal-top: "0"
+terminal-width: "100%"
+terminal-height: "100%"
+
++ boot_menu {
+	left = 0%
+	width = 40%
+	top = 30%
+	height = 100%
+	item_color = "#ffffff"
+        selected_item_color = "#02CCFC"
+	item_height = 20
+	item_padding = 5
+	item_spacing = 30
+}
+
++ vbox {
+    left = 5%
+    top = 80%
+    width = 40%
+    + label { width = 40 height = 20 color = "#ffffff" text = "[↵] Boot selected Entry" }
+    + label { width = 40 height = 20 color = "#ffffff" text = "[↑ and ↓ Key] Navigation" }
+    + label { width = 40 height = 20 color = "#ffffff" text = "[E] Edit Selection" }
+    + label { width = 40 height = 20 color = "#ffffff" text = "[C] GRUB Commandline" }
+}
