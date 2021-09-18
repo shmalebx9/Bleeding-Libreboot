@@ -1,4 +1,4 @@
-desktop-image: "background.jpg"
+desktop-image: "background.png"
 title-text: ""
 
 terminal-border: "0"
