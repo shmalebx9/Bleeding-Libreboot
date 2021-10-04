@@ -1,0 +1,6 @@
+roms/
+roms/**
+*.rom
+bin/**
+test.cfg
+
