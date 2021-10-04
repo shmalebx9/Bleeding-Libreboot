@@ -1,0 +1,249 @@
+set prefix=(memdisk)/boot/grub
+
+insmod at_keyboard
+insmod usb_keyboard
+insmod nativedisk
+insmod ehci
+insmod ohci
+insmod uhci
+insmod usb
+insmod usbms
+insmod usbserial_pl2303
+insmod usbserial_ftdi
+insmod usbserial_usbdebug
+insmod regexp
+
+# Serial and keyboard configuration, very important.
+serial --speed=115200 --unit=0 --word=8 --parity=no --stop=1
+terminal_input --append  serial
+terminal_output --append serial
+terminal_input --append at_keyboard
+terminal_output --append cbmemc
+
+gfxpayload=keep
+terminal_output --append gfxterm
+
+# Custom Settings
+insmod png
+loadfont (cbfsdisk)/font.pf2
+set theme=(cbfsdisk)/theme.txt
+
+# Default to first option, automatically boot after 1 second
+set default="0"
+set timeout=1
+
+# This is useful when using 'cat' on long files on GRUB terminal
+set pager=1
+
+keymap usqwerty
+function try_user_config {
+	set root="${1}"
+	for dir in boot grub grub2 boot/grub boot/grub2; do
+		for name in '' osboot_ autoboot_ libreboot_ coreboot_; do
+			if [ -f /"${dir}"/"${name}"grub.cfg ]; then
+                unset superusers
+				configfile /"${dir}"/"${name}"grub.cfg
+			fi
+		done
+	done
+}
+function search_grub {
+	echo -n "Attempting to load grub.cfg from: "
+	unset ddev
+	if [ (${1}?) != "(${1}?)" ]; then
+		ddev=(${1}*) # Both raw and partitioned devices
+	fi
+	for i in ${ddev}; do
+		echo -n "${i} "
+		try_user_config "${i}"
+	done
+	echo # Insert newline
+}
+function try_isolinux_config {
+	set root="${1}"
+	for dir in '' /boot; do
+		if [ -f "${dir}"/isolinux/isolinux.cfg ]; then
+			syslinux_configfile -i "${dir}"/isolinux/isolinux.cfg
+		elif [ -f "${dir}"/syslinux/syslinux.cfg ]; then
+			syslinux_configfile -s "${dir}"/syslinux/syslinux.cfg
+		fi
+	done
+}
+function search_isolinux {
+	unset ddev
+	if [ (${1}?) != "(${1}?)" ]; then
+		ddev=(${1}*) # Both raw and partitioned devices.
+		echo -n "Attempting to parse isolinux menu from: "
+	fi
+	for i in ${ddev}; do
+		echo -n "${i} "
+		try_isolinux_config "${i}"
+	done
+	echo # Insert newline
+}
+
+menuentry 'Load Disk GRUB/boot [g]' --hotkey='g' {
+# GRUB2 handles (almost) every possible disk setup, but only the location of
+# /boot is actually important since GRUB2 only loads the user's config.
+
+# LVM, RAID, filesystems and encryption on both raw devices and partitions in
+# all various combinations need to be supported. Since full disk encryption is
+# possible with GRUB2 as payload and probably even used by most users, this
+# configuration tries to load the operating system in the following way:
+
+# 1. Look for user configuration on unencrypted devices first to avoid
+# unnecessary decryption routines in the following order:
+
+#	1) raw devices and MBR/GPT partitions
+    search_grub usb
+	search_grub ahci
+    search_grub ata
+#	2) LVM and RAID which might be used accross multiple devices
+	unset lvmvol
+	for vol in bootvol rootvol; do
+		if [ (lvm\/?atrix-${vol}) != "(lvm/?atrix-${vol})" ]; then # Sketchy check, hardcoded string to be dropped in future
+			lvmvol="${lvmvol} (lvm/matrix-${vol})"
+		fi
+	done
+	unset raidvol
+	if [ (md/?) != "(md/?)" ] ; then
+		raidvol=(md/?)
+	fi
+	for vol in ${lvmvol} ${raidvol} ; do
+		try_user_config "${vol}"
+	done
+# 2. In case no configuration could be found, try decrypting devices. Look
+# on raw crypto devices as well as inside LVM volumes this time.
+
+#	The user will be prompted for a passphrase if a LUKS header was found.
+# Encrypted disks and partitions
+#TODO: This needs to be adjusted on each device to exclude ODD
+#TODO: Usually ATA is for odd if both exist!
+#TODO: Shouldn't it stop at first successful cryptomount?
+#TODO: Unset variables before use!
+#TODO: Pick better variable name scheme than ${ddev}, or find way to make it local
+	unset ahcidev
+	unset atadev
+    unset usbdev
+	if [ (ahci?) != "(ahci?)" ]; then
+		ahcidev=(ahci*)
+	fi
+	if [ (ata?) != "(ata?)" ]; then
+		atadev=(ata*)
+	fi
+	if [ (usb?) != "(usb?)" ]; then
+		usbdev=(usb*)
+	fi
+	set pager=0
+	echo -n "Attempting to cryptomount: "
+	for dev in ${usbdev} ${ahcidev} ${atadev} ${lvmvol}; do # what about raid?
+		echo -n "${dev} "
+		cryptomount "${dev}"
+	done
+	set pager=1
+	echo # Insert newline
+
+# Rescan lvm volumes, should probably use test at this point
+	unset lvmvol
+	for vol in bootvol rootvol; do
+		if [ (lvm\/?atrix-${vol}) != "(lvm/?atrix-${vol})" ]; then # Sketchy check, hardcoded string to be dropped in future
+			lvmvol="${lvmvol} (lvm/matrix-${vol})"
+		fi
+	done
+
+#	3) encrypted devices/partitions
+	search_grub crypto
+#	4) LVM inside LUKS containers
+	for vol in ${lvmvol}; do
+		try_user_config "${vol}"
+	done
+
+# TODO: generalize last resorts
+# Use first connected device? not just sata port 1
+
+	# Last resort, if all else fails
+	set root=ahci0,1
+	for p in / /boot/; do
+		if [ -f "${p}vmlinuz" ]; then
+			linux ${p}vmlinuz root=/dev/sda1 rw
+			if [ -f "${p}initrd.img" ]; then
+				initrd ${p}initrd.img
+			fi
+		fi
+	done
+
+	# Last resort (for setups that use IDE instead of SATA)
+	set root=ata0,1
+	for p in / /boot/; do
+		if [ -f "${p}vmlinuz" ]; then
+			linux ${p}vmlinuz root=/dev/sda1 rw
+			if [ -f "${p}initrd.img" ]; then
+				initrd ${p}initrd.img
+			fi
+		fi
+	done
+
+	true # Prevent pager requiring to accept each line instead of whole screen
+}
+menuentry 'Search ISOLINUX menu (AHCI)  [a]' --hotkey='a' {
+	search_isolinux ahci
+}
+menuentry 'Search ISOLINUX menu (USB)  [u]' --hotkey='u' {
+	search_isolinux usb
+}
+menuentry 'Search ISOLINUX menu (CD/DVD)  [d]' --hotkey='d' {
+	insmod ata
+	unset ahcidev
+	unset atadev
+	if [ (ata?) != "(ata?)" ]; then
+		atadev=(ata?) # Only full drives not partitions
+	fi
+	if [ (ahci?) != "(ahci?)" ]; then
+		ahcidev=(ahci1) # TODO: hardcoded!!!
+	fi
+	echo -n "Attempting to parse isolinux menu from: "
+	for dev in ${atadev} ${ahcidev}; do
+		echo -n "${dev} "
+		try_isolinux_config "${dev}"
+	done
+	echo # Insert newline
+}
+menuentry 'Load test configuration  [t]' --hotkey='t' {
+	set root='(cbfsdisk)'
+	if [ -f /grubtest.cfg ]; then
+		configfile /grubtest.cfg
+	fi
+}
+menuentry 'Search external media  [s]' --hotkey='s' {
+	search_grub usb
+}
+if [ -f (cbfsdisk)/seabios.elf ]; then
+menuentry 'Load SeaBIOS [b]' --hotkey='b' {
+    set root='cbfsdisk'
+    chainloader /seabios.elf
+}
+fi
+if [ -f (cbfsdisk)/img/grub2 ]; then
+menuentry 'Return to SeaBIOS [b]' --hotkey='b' {
+    set root='cbfsdisk'
+    chainloader /fallback/payload
+}
+fi
+menuentry 'Poweroff  [p]' --hotkey='p' {
+	halt
+}
+menuentry 'Reboot  [r]' --hotkey='r' {
+	reboot
+}
+if [ -f (cbfsdisk)/tianocore.elf ]; then
+menuentry 'Load Tianocore UEFI payload' {
+	set root='cbfsdisk'
+	chainloader /tianocore.elf
+}
+fi
+if [ -f (cbfsdisk)/img/memtest ]; then
+menuentry 'Load MemTest86+  [m]' --hotkey='m' {
+	set root='cbfsdisk'
+	chainloader /img/memtest
+}
+fi

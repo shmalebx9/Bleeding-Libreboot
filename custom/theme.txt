@@ -10,13 +10,48 @@ terminal-height: "100%"
 + boot_menu {
 	left = 0%
 	width = 40%
-	top = 30%
-	height = 100%
+	top = 10%
+	height = 60%
 	item_color = "#ffffff"
         selected_item_color = "#02CCFC"
 	item_height = 20
 	item_padding = 5
-	item_spacing = 30
+	item_spacing = 15
+}
+
++ vbox {
+    left = 47%
+    top = 15%
+    width = 50%
+    + label { width = 40 height = 20 color = "#ffffff" text = "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "██ ████▄ ▄██ ▄▄▀██ ▄▄▀██ ▄▄▄██ ▄▄▀██ ▄▄▄ ██ ▄▄▄ █▄▄ ▄▄█"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "██ █████ ███ ▄▄▀██ ▀▀▄██ ▄▄▄██ ▄▄▀██ ███ ██ ███ ███ ███"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "██ ▀▀ █▀ ▀██ ▀▀ ██ ██ ██ ▀▀▀██ ▀▀ ██ ▀▀▀ ██ ▀▀▀ ███ ███"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀"}
+}
+
++ vbox {
+    left = 51%
+    top = 40%
+    width = 50%
+    + label { width = 40 height = 20 color = "#ffffff" text = "                                ██  "}
+    + label { width = 40 height = 20 color = "#ffffff" text = "                                 ██ ██"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "                                  ███"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "                              █████████████"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "                                ████████ "}
+    + label { width = 40 height = 20 color = "#ffffff" text = "                               ██████"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "                               ██████"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "                             ████████"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "                         ████████████"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "             ███████████████████████"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "           ██████████████████████████████████"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "           █████████████████████████     ███"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "          ████████████                 ███"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "      ███████████                   ████"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "      ████████"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "     ███"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "  ████"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "██"}
 }
 
 + vbox {
