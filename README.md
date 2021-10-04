@@ -11,20 +11,30 @@ Essentially, these roms appear like the stable libreboot release from 2016 but w
 + [fixed reboot bug](https://notabug.org/libreboot/lbmk/issues/11)
 + Secondary SeaBios payload
 
-I also added the customizations present in my personal build with a different background and font. To make your own, simply edit the files in the *custom* folder and run `./patch custom.`
+To make your own, simply edit the files in the *custom* folder and run `./patch custom.`
+By default the custom roms have:
 
-| Examples |
++ Different font
++ Different background
++ Menu on the side
++ Ascii art
++ Beeps disabled
+
+| **Examples** |
 |:---------:|
 | Libreboot testing release |
 | ![old](old.jpg) |
-| "Stock" |
+| **"Stock"** |
+| ![stock](stock.jpg) |
+| **Custom** |
+| ![custom](custom.jpg) |
 
 # Instructions
 
 To replicate these builds:
 
 + Follow the [lbmk instructions](https://libreboot.org/docs/build/)
-+ Move the desired rom to the root of this git repo
++ Move the desired rom to the rom directory of this git repo
 + Run patch.sh *stable/custom*
 
 Make sure you have cbfstool installed to run the patch script.
