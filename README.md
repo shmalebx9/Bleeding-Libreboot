@@ -31,6 +31,11 @@ By default the custom roms have:
 
 # Instructions
 
+To simply install, download one of the archives from the releases page.
+Extract and flash the correct rom for your machine using flashrom.
+
+If you have trouble with internal flashing add `iomem=relaxed` to your kernel's cmdline.
+
 To replicate these builds:
 
 + Follow the [lbmk instructions](https://libreboot.org/docs/build/)
