@@ -111,7 +111,7 @@ Flash(){
 	if [ "$autochip" = "true" ] ; then
 	 $flsh -w rom.rom
 	else
-  echo "$flsh -w rom.rom -c $chip"
+  $flsh -w rom.rom -c $chip
 	fi
 }
 
