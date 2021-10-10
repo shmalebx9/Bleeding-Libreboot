@@ -1,0 +1,130 @@
+#!/bin/bash
+
+flsh='flashrom -p linux_spi:dev=/dev/spidev0.0,spispeed=512'
+
+Test_read() {
+	if [ ! -f "$PWD/fact1" ] && [ ! -f "$PWD/fact2" ]; then
+		echo "no reads done already"
+	if [ "$autochip" = "true" ] ; then
+	 echo "the chip was found automatically"
+	 $flsh -r fact2
+	else
+	 $flsh -r fact1 -c $chip && $flsh -r fact2 -c $chip
+	fi
+	fi
+
+	check1=$(md5sum fact1 | awk '{print $1}')
+	check2=$(md5sum fact2 | awk '{print $1}')
+	if [ "$check1" = "$check2" ] ; then
+	 echo "checksums match, connection is good"
+	 return 0
+	else
+	 echo -e 'ERROR: checksums do not match, your connection is bad\ntry disconnecting and cleaning the contacts of your clip and the chip'
+#	 rm fact*
+	 exit 1
+	fi
+ }
+
+Get_chipname(){
+	autochip=false
+	$flsh -r fact1 > /tmp/flshoutput && (echo "got chip name automatically" ; autochip=true ; return 0)
+	grep -q 'Found.*chip' /tmp/flshoutput || ( echo -e 'ERROR: no chips found.\nMake sure that you have wired up your chip correctly and that your chip is clean.' ; exit 1 )
+	n=0
+	rm /tmp/chiplist > /dev/null 2>&1
+	awk -F '"' '/^Found/ {print $2}' /tmp/flshoutput | while read -r line ; do
+ 	 let n=$n+1
+	 echo "$n $line" >> /tmp/chiplist
+	 done
+
+	 whiptail --menu 'Select your chip model, generally number one or two in the list' 30 60 20 $(cat /tmp/chiplist) 2> /tmp/choice
+	 choice=$(cat /tmp/choice)
+	 chip=$(awk -v choice="$choice" '$1 ~ choice {print $2}' /tmp/chiplist)
+	 
+
+
+ }
+
+Add_mac(){
+ mac=$( whiptail --inputbox 'type mac address. EX: 00:24:7E:16:E3:81' 30 60 3>&2 2>&1 1>&3 )
+	dir="$PWD"
+	mkdir -p /tmp/macmake && cd /tmp/macmake
+	ich9gen --macaddress $mac
+	cp ich9fdgbe_*"$chipsize"*.bin $dir/mac.bin
+	cd $dir
+	dd if=mac.bin of=rom.rom bs=1 count=12k conv=notrunc || (echo "failed to write mac address, quitting" ; exit 1)
+	rm mac.bin
+}
+
+Prepare_rom(){
+	if [ -z "$rompath" ]; then
+	chipsize=$(du -h fact1 | awk '{print $1}')
+	chipsize=${chipsize%???}
+
+	model=$(whiptail --menu 'Which model are you trying to flash' 30 60 20 \
+		"1" "x200" \
+		"2" "t400" \
+		"3" "t500" 3>&2 2>&1 1>&3)
+		
+	case $model in
+		1) model='x200';;
+		2) model='t400';;
+		3) model='t500';;
+	esac
+
+ layout=$(whiptail --menu 'select keyboard layout' 30 60 20 \
+"1"  "colemak" \
+"2"  "deqwertz" \
+"3"  "esqwerty" \
+"4"  "frazerty" \
+"5"  "frdvbepo" \
+"6"  "itqwerty" \
+"7"  "svenska" \
+"8"  "trqwerty" \
+"9"  "ukdvorak" \
+"10"  "ukqwerty" \
+"11"  "usdvorak" \
+"12"  "usqwerty" 3>&2 2>&1 1>&3)
+
+ case $layout in
+ 1) layout='colemak';;
+ 2) layout='deqwertz';;
+ 3) layout='esqwerty';;
+ 4) layout='frazerty';;
+ 5) layout='frdvbepo';;
+ 6) layout='itqwerty';;
+ 7) layout='svenska';;
+ 8) layout='trqwerty';;
+ 9) layout='ukdvorak';;
+ 10) layout='ukqwerty';;
+ 11) layout='usdvorak';;
+ 12) layout='usqwerty';;
+esac
+
+ cp ~/libreboot/roms/$model*$chipsize*$layout* rom.rom
+else
+ cp "$rompath" rom.rom
+	fi
+}
+
+Flash(){
+  echo -e 'flashing in progress\nDO NOT power off'
+	if [ "$autochip" = "true" ] ; then
+	 $flsh -w rom.rom
+	else
+  echo "$flsh -w rom.rom -c $chip"
+	fi
+}
+
+case $1 in
+	-r) rompath="$2";;
+esac
+
+startdir=$PWD
+#rm /libreboot/work/* >/dev/null 2>&1
+mkdir -p ~/libreboot/work ; cd ~/libreboot/work
+Get_chipname
+Test_read
+Prepare_rom
+Add_mac
+Flash
+cd $startdir
