@@ -115,9 +115,13 @@ Flash(){
 	fi
 }
 
-case $1 in
-	-r) rompath="$2";;
-esac
+while getopts r:i flag
+do
+    case "${flag}" in
+        r) rompath=${OPTARG};;
+        i) flsh="sudo flashrom -p internal";;
+    esac
+done
 
 startdir=$PWD
 #rm /libreboot/work/* >/dev/null 2>&1
