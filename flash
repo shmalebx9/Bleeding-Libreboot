@@ -3,12 +3,6 @@
 flsh='flashrom -p linux_spi:dev=/dev/spidev0.0,spispeed=512'
 
 Test_read() {
-if [ "$testread" = "true" ] ; then
- echo "running test read"
-Test_read
-else
- echo "not backing up old rom" || return 0
-fi
 	if [ ! -f "$PWD/fact1" ] && [ ! -f "$PWD/fact2" ]; then
 		echo "no reads done already"
 	if [ "$autochip" = "true" ] ; then
@@ -45,6 +39,9 @@ Get_chipname(){
 	 whiptail --menu 'Select your chip model, generally number one or two in the list' 30 60 20 $(cat /tmp/chiplist) 2> /tmp/choice
 	 choice=$(cat /tmp/choice)
 	 chip=$(awk -v choice="$choice" '$1 ~ choice {print $2}' /tmp/chiplist)
+	 
+
+
  }
 
 Add_mac(){
@@ -109,6 +106,17 @@ else
 	fi
 }
 
+Get_chipsize(){
+	chipsize=$(whiptail --menu 'What is the chipsize?' 30 60 20 \
+		"1" "8mb" \
+		"2" "4mb" 3>&2 2>&1 1>&3)
+		
+	case $chipsize in
+		1) chipsize='8mb';;
+		2) chipsize='4mb';;
+	esac
+}
+
 Flash(){
   echo -e 'flashing in progress\nDO NOT power off'
 	if [ "$autochip" = "true" ] ; then
@@ -132,6 +140,13 @@ startdir=$PWD
 #rm /libreboot/work/* >/dev/null 2>&1
 mkdir -p ~/libreboot/work ; cd ~/libreboot/work
 Get_chipname
+if [ "$testread" = "true" ] ; then
+ echo "running test read"
+Test_read
+else
+ echo "not backing up old rom" || return 0
+ Get_chipsize
+fi
 Prepare_rom
 Add_mac
 Flash
