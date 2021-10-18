@@ -39,9 +39,6 @@ Get_chipname(){
 	 whiptail --menu 'Select your chip model, generally number one or two in the list' 30 60 20 $(cat /tmp/chiplist) 2> /tmp/choice
 	 choice=$(cat /tmp/choice)
 	 chip=$(awk -v choice="$choice" '$1 ~ choice {print $2}' /tmp/chiplist)
-	 
-
-
  }
 
 Add_mac(){
@@ -110,8 +107,8 @@ else
 
 Get_chipsize(){
 	chipsize=$(whiptail --menu 'What is the chipsize?' 30 60 20 \
-		"1" "8mb" \
-		"2" "4mb" 3>&2 2>&1 1>&3)
+		"1" "8m" \
+		"2" "4m" 3>&2 2>&1 1>&3)
 		
 	case $chipsize in
 		1) chipsize='8mb';;
