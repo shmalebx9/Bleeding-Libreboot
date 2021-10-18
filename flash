@@ -146,7 +146,7 @@ else
  echo "not backing up old rom" || return 0
  Get_chipsize
 fi
-Prepare_rom
-Add_mac
+Prepare_rom && \
+Add_mac && \
 Flash
 cd $startdir
