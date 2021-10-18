@@ -3,6 +3,12 @@
 flsh='flashrom -p linux_spi:dev=/dev/spidev0.0,spispeed=512'
 
 Test_read() {
+if [ "$testread" = "true" ] ; then
+ echo "running test read"
+Test_read
+else
+ echo "not backing up old rom" || return 0
+fi
 	if [ ! -f "$PWD/fact1" ] && [ ! -f "$PWD/fact2" ]; then
 		echo "no reads done already"
 	if [ "$autochip" = "true" ] ; then
@@ -39,9 +45,6 @@ Get_chipname(){
 	 whiptail --menu 'Select your chip model, generally number one or two in the list' 30 60 20 $(cat /tmp/chiplist) 2> /tmp/choice
 	 choice=$(cat /tmp/choice)
 	 chip=$(awk -v choice="$choice" '$1 ~ choice {print $2}' /tmp/chiplist)
-	 
-
-
  }
 
 Add_mac(){
@@ -115,11 +118,13 @@ Flash(){
 	fi
 }
 
-while getopts r:i flag
+testread=true
+while getopts r:i:n flag
 do
     case "${flag}" in
         r) rompath=${OPTARG};;
         i) flsh="sudo flashrom -p internal";;
+        n) testread=false ;;
     esac
 done
 
@@ -127,7 +132,6 @@ startdir=$PWD
 #rm /libreboot/work/* >/dev/null 2>&1
 mkdir -p ~/libreboot/work ; cd ~/libreboot/work
 Get_chipname
-Test_read
 Prepare_rom
 Add_mac
 Flash
