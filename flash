@@ -57,7 +57,7 @@ Add_mac(){
 
 Prepare_rom(){
 	if [ -z "$rompath" ]; then
-  if [ -z "$chipsize" ] ; then
+  if [ -n "$chipsize" ] ; then
 	chipsize=$(du -h fact1 | awk '{print $1}')
 	chipsize=${chipsize%???}
   fi
