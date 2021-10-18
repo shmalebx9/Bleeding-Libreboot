@@ -138,7 +138,7 @@ done
 startdir=$PWD
 #rm /libreboot/work/* >/dev/null 2>&1
 mkdir -p ~/libreboot/work ; cd ~/libreboot/work
-Get_chipname
+Get_chipname || exit 1
 if [ "$testread" = "true" ] ; then
  echo "running test read"
 Test_read
