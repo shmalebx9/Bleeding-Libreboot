@@ -57,8 +57,10 @@ Add_mac(){
 
 Prepare_rom(){
 	if [ -z "$rompath" ]; then
+  if [ -z "$chipsize" ] ; then
 	chipsize=$(du -h fact1 | awk '{print $1}')
 	chipsize=${chipsize%???}
+  fi
 
 	model=$(whiptail --menu 'Which model are you trying to flash' 30 60 20 \
 		"1" "x200" \
