@@ -61,7 +61,7 @@ Prepare_rom(){
 	chipsize=$(du -h fact1 | awk '{print $1}')
 	chipsize=${chipsize%???}
   fi
-
+ echo "flashing for $chipsize chip"
 	model=$(whiptail --menu 'Which model are you trying to flash' 30 60 20 \
 		"1" "x200" \
 		"2" "t400" \
