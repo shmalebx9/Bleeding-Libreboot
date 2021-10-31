@@ -1,6 +1,19 @@
 #!/bin/bash
 
 flsh='flashrom -p linux_spi:dev=/dev/spidev0.0,spispeed=512'
+export PATH="$PATH:$PWD/utils"
+
+Bootstrap(){
+ echo "trying to bootstrap utilities"
+ wget 'https://rsync.libreboot.org/stable/20160907/libreboot_r20160907_util.tar.xz'
+ mkdir -p /tmp/flashutils
+ mkdir utils
+ tar xvf libreboot_r20160907_util.tar.xz -C /tmp/flashutils
+ 
+ mv /tmp/flashutils/libreboot_r20160907_util/ich9deblob/x86_64/ich9gen utils/
+ mv /tmp/flashutils/libreboot_r20160907_util/cbfstool/x86_64/cbfstool utils/
+ mv /tmp/flashutils/libreboot_r20160907_util/nvramtool/x86_64/nvramtool utils/
+}
 
 Test_read() {
 	if [ ! -f "$PWD/fact1" ] && [ ! -f "$PWD/fact2" ]; then
@@ -126,12 +139,13 @@ Flash(){
 }
 
 testread=true
-while getopts r:i:n flag
+while getopts r:i:n:b flag
 do
     case "${flag}" in
         r) rompath=${OPTARG};;
         i) flsh="sudo flashrom -p internal";;
         n) testread=false ;;
+        b) Bootstrap && exit 0 ;;
     esac
 done
 

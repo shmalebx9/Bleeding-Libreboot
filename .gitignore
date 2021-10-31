@@ -3,4 +3,5 @@ roms/**
 *.rom
 bin/**
 test.cfg
+uitls/
 
