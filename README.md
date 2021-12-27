@@ -9,6 +9,7 @@ Essentially, these roms appear like the stable libreboot release from 2016 but w
 + Corebootfb graphics
 + Support for quad core cpus
 + [fixed reboot bug](https://notabug.org/libreboot/lbmk/issues/11)
++ Fixed intel speedstep bug (needed for quad-core mod)
 + Secondary SeaBios payload
 
 To make your own, simply edit the files in the *custom* folder and run `./patch custom.`
