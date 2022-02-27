@@ -1,7 +1,9 @@
 roms/
-roms/**
-*.rom
+me/
+me/*
+roms/*
 bin/**
+*.tar.xz
 test.cfg
 uitls/
 
