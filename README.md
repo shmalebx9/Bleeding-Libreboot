@@ -23,8 +23,6 @@ By default the custom roms have:
 
 | **Examples** |
 |:---------:|
-| Libreboot testing release |
-| ![old](old.jpg) |
 | **"Stock"** |
 | ![stock](stock.jpg) |
 | **Custom** |
@@ -32,10 +30,24 @@ By default the custom roms have:
 
 # Instructions
 
-To simply install, download one of the archives from the releases page.
-Extract and flash the correct rom for your machine using flashrom.
+You'll need to set iomem=relaxed to internally flash.
+You can easily set kernel parameters from grub, which generally only requires a simple reboot. On some librebooted machines, the grub payload will launch your operating system without ever prompting you with a kernel menu (generally the case with trisquel). Sometimes, you can prompt a menu list by hitting the shift key over and over during boot. You can edit kernel parameters from the initial libreboot-grub menu but it is complex. I recommend preparing a bootable usb with your favourite linux distro and editing the menu from there if you can’t get to your grub menu by rebooting.
 
-If you have trouble with internal flashing add `iomem=relaxed` to your kernel's cmdline.
+Note: if you do boot from a usb to flash, you’ll need to follow this guide within your live environment. If you don’t want to do the entire thing in one sitting then you should set up persistent storage on your usb device.
+
+When you get to your grub menu, you can edit the default menu entry by pressing ‘e.’ Use the arrow keys to navigate down to the line starting with ‘linux’ and add ‘iomem=relaxed’ to the end of the line.
+
+If you want to flash one of these roms from a machine already running coreboot/libreboot/osboot, then internal flashing is the easiest route.
+To flash internally, follow these steps:
+
+1. Install flashrom from your distro's repos
+2. Set iomem=relaxed 
+3. Read current rom with `flashrom -p internal -r current.rom`
+4. Check the size of your eeprom based on the size of the flash with `du -h current.rom`
+5. Flash the rom of the corresponding size with `flashrom -p internal -w example_rom.rom`
+
+If you get a list of flash chips when you try to use flashrom then just try all of the ones listed until one works.
+Make sure to NEVER interrupt flashrom while it is writing.
 
 To replicate these builds:
 
@@ -128,3 +140,7 @@ After creating your theme, add the theme file, grub.cfg, and all fonts and backg
 
 The theme file can set all kinds of options such as the size and position of the boot menu, optional text, and background image.
 To get an idea of how to write a theme file, see the theme.txt file in this repo under the `custom` directory.
+
+## Credits
+
+Thanks to (vinceliuice)[https://github.com/vinceliuice/grub2-themes] for border images in modern theme.
