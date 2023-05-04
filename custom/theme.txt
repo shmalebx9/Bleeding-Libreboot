@@ -2,10 +2,10 @@ desktop-image: "background.png"
 title-text: ""
 
 terminal-border: "0"
-terminal-left: "35%"
+terminal-left: "0"
 terminal-top: "0"
-terminal-width: "64%"
-terminal-height: "60%"
+terminal-width: "100%"
+terminal-height: "100%"
 
 + boot_menu {
 	left = 0%
@@ -21,7 +21,7 @@ terminal-height: "60%"
 
 + vbox {
     left = 47%
-    top = 15%
+    top = 8%
     width = 50%
     + label { width = 40 height = 20 color = "#ffffff" text = "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄"}
     + label { width = 40 height = 20 color = "#ffffff" text = "██ ████▄ ▄██ ▄▄▀██ ▄▄▀██ ▄▄▄██ ▄▄▀██ ▄▄▄ ██ ▄▄▄ █▄▄ ▄▄█"}
@@ -31,8 +31,8 @@ terminal-height: "60%"
 }
 
 + vbox {
-    left = 51%
-    top = 40%
+    left = 40%
+    top = 35%
     width = 50%
     + label { width = 40 height = 20 color = "#ffffff" text = "                                ██  "}
     + label { width = 40 height = 20 color = "#ffffff" text = "                                 ██ ██"}

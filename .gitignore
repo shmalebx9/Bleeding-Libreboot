@@ -1,7 +1,5 @@
-roms/
 me/
 me/*
-roms/*
 bin/**
 *.tar.xz
 test.cfg
