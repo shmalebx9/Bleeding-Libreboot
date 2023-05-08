@@ -23,11 +23,11 @@ terminal-height: "100%"
     left = 47%
     top = 8%
     width = 50%
-    + label { width = 40 height = 20 color = "#ffffff" text = "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄"}
-    + label { width = 40 height = 20 color = "#ffffff" text = "██ ████▄ ▄██ ▄▄▀██ ▄▄▀██ ▄▄▄██ ▄▄▀██ ▄▄▄ ██ ▄▄▄ █▄▄ ▄▄█"}
-    + label { width = 40 height = 20 color = "#ffffff" text = "██ █████ ███ ▄▄▀██ ▀▀▄██ ▄▄▄██ ▄▄▀██ ███ ██ ███ ███ ███"}
-    + label { width = 40 height = 20 color = "#ffffff" text = "██ ▀▀ █▀ ▀██ ▀▀ ██ ██ ██ ▀▀▀██ ▀▀ ██ ▀▀▀ ██ ▀▀▀ ███ ███"}
-    + label { width = 40 height = 20 color = "#ffffff" text = "▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "██ █████▄ ▄██ ▄▄▀██ ▄▄▀██ ▄▄▄██ ▄▄▀██▀▄▄▄▀██▀▄▄▄▀█▄▄ ▄▄█"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "██ ██████ ███ ▄▄▀██ ▀▀▄██ ▄▄▄██ ▄▄▀██ ███ ██ ███ ███ ███"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "██ ▀▀▀██▀ ▀██ ▀▀ ██ ██ ██ ▀▀▀██ ▀▀ ██▄▀▀▀▄██▄▀▀▀▄███ ███"}
+    + label { width = 40 height = 20 color = "#ffffff" text = "▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀"}
 }
 
 + vbox {
@@ -55,7 +55,7 @@ terminal-height: "100%"
 }
 
 + vbox {
-    left = 5%
+    left = 0%
     top = 80%
     width = 40%
     + label { width = 40 height = 20 color = "#ffffff" text = "[↵] Boot selected Entry" }

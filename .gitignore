@@ -4,4 +4,4 @@ bin/**
 *.tar.xz
 test.cfg
 uitls/
-
+roms/**
