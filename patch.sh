@@ -10,6 +10,7 @@ done
 }
 
 dir=$PWD
+mkdir -p $dir/bin
 type=$1
 cp roms/* "$type"
 cd "$type"
@@ -17,6 +18,7 @@ cd "$type"
 Cbchange background.*
 Cbchange grub.cfg
 Cbchange theme.txt
+Cbchange DETAILS
 Cbchange font.pf2
 
 if [ "$type" = "custom" ] ; then
